@@ -1,0 +1,14 @@
+<div class="mb-3">
+    <input 
+        type={{type}}
+        [class.is-invalid]="control.touched && control.invalid"
+        class="form-control text-center" 
+        [formControl]="control"
+        placeholder={{label}}
+    >
+    <div class="invalid-feedback" *ngIf="control.errors?.['required']">lütfen {{label}} girin</div>
+    <div class="invalid-feedback" *ngIf="control.errors?.['minlength']">{{label}} en az {{control.errors?.['minlength'].requiredLength}} karakter olabilir</div>
+    <div class="invalid-feedback" *ngIf="control.errors?.['maxlength']">{{label}} en fazla {{control.errors?.['maxlength'].requiredLength}} karakter olabilir</div>
+    <div class="invalid-feedback" *ngIf="control.errors?.['notMatching']">Şifreler uyuşmuyor</div>
+    <div class="invalid-feedback" *ngIf="control.errors?.['requireUppercaseLowercaseNumber']"> büyük harf, küçük harf ve sayı içermelidir</div>
+</div>

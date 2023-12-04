@@ -1,0 +1,244 @@
+<div *appHasRole="['Admin']">
+    <h1>Kullanıcılar</h1>
+    <hr>
+    <div class="d-flex justify-content-between mb-2">
+        <div>
+          <label for="exceld">Kullanıcı Kaydet </label>
+          <button id="exceld" class="btn btn-success ms-2" (click)="addModal.show()">Ekle</button>
+        </div>
+          <input type="text" style="width: 150px;"
+          class="form-control ms-2"
+          placeholder="Arama"
+          [(ngModel)]="searchTextUser" name="searchTextUser">
+      </div>
+    <!-- <div class="d-flex" style="font-size: small;">
+        <div class="mx-2">
+            <h2>Admin</h2>
+            <p>Can See: Transactions, Vehicles, Brands/Models, Companies/Owners, FuelTypes, Users and Admin</p>
+            <p>Can Add: Anything</p>
+            <p>Can Edit: Everything including Registered users and Roles </p>
+        </div> 
+        <div class="mx-2">
+            <h2>Moderator</h2>
+            <p>Can See: Transactions, Vehicles, Brands/Models, Companies/Owners, FuelTypes and Users</p>
+            <p>Can Add: Transactions</p>
+            <p>Can Edit: Transactions added by themselves.</p>
+        </div>
+        <div class="mx-2">
+            <h2>Member</h2>
+            <p>Can See: Transactions</p>
+            <p>Can Add: Nothing</p>
+            <p>Can Edit: Nothing</p>
+        </div>
+    </div> -->
+    <div class="mt-1" style="font-size: 200%;">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Kullanıcı Adı</th>
+                    <th *ngFor="let role of availableRoles">{{role}}</th>
+                    <th style="width: 10%;">Kullanıcı Sil</th>
+                    <th style="width: 10%;">İsmi Değiştir</th>
+                    <th style="width: 10%;">Eklenen Alımlar</th>
+                    <th *ngIf="sessionUserName == 'admin'" style="width: 10%;">Şifre değiştir</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of usersWithRoles | searchUser: searchTextUser">
+                    <td>{{user.userName}}
+                        <i *ngIf="user.roles.includes('Admin') && user.userName === 'admin'" class="fa fa-star text-danger"></i>
+                        <i *ngIf="user.roles.includes('Admin')" class="fa fa-star text-warning"></i>
+                        <i *ngIf="user.roles.includes('Moderator') && !user.roles.includes('Admin')" class="fa fa-wrench text-info"></i>
+                        <i *ngIf="user.roles.includes('Member') && !user.roles.includes('Admin') && !user.roles.includes('Moderator')" class="fa fa-user text-success"></i>
+                    </td>
+                    <td *ngFor="let role of availableRoles">
+                        <button class="btn" style="width: 150px;"
+                            (click)="updateRoles(user, role)"
+                            [ngClass]="{
+                            'btn-success': user.roles.includes(role),
+                            'btn-outline-success': !user.roles.includes(role)
+                            }"
+                            [disabled]="user.userName === 'admin'">
+                                {{role}}
+                                <i *ngIf="user.roles.includes(role)" class="fa fa-check"></i>
+                        </button>
+                    </td>
+                    <td style="width: 10%;">
+                        <button class="btn btn-danger" (click)="deleteUser(user.userName)" [disabled]="user.userName === 'admin'">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                    <td style="width: 10%;">
+                        <button class="btn btn-secondary" (click)="nameModal.show(); changeS=user.userName" [disabled]="user.userName === 'admin'">
+                            <i class="fa fa-gear"></i>
+                        </button>
+                    </td>
+                    <td style="width: 10%;">
+                        <button routerLink="/transactions" [queryParams]="{userName: user.userName, userId: user.id}" class="btn btn-info">
+                            <i class="fa fa-arrow-right"></i>
+                        </button>
+                    </td>
+                    <td style="width: 10%;">
+                        <button class="btn btn-warning" (click)="userpchange=user.userName; pModal.show(); " [disabled]="user.userName === 'admin'">
+                            <i class="fa fa-key"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" bsModal #addModal="bs-modal" [config]="{backdrop: 'static'}"
+     tabindex="-1" role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">Kullanıcı Kaydet</h4>
+        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="addModal.hide()">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="registerForm" (ngSubmit)="registerForm.valid && register()" autocomplete="off">
+            <div class="d-flex">
+                <div class="mx-2">
+                    <label>Kullanıcı Adı</label>
+                    <app-text-input [formControl]="$any(registerForm.controls['userName'])" [label]="'Kullanıcı ismi'"></app-text-input>
+                </div>
+                <div class="mx-2">
+                    <label>Şifre</label>
+                    <app-text-input class="mx-4" [formControl]="$any(registerForm.controls['password'])" [label]="'Şifre'" [type]="'password'"></app-text-input>
+                </div>
+                <div class="mx-2">
+                    <label>Şifre Doğrula</label>
+                    <app-text-input [formControl]="$any(registerForm.controls['confirmPassword'])" [label]="'Şifre Doğrula'" [type]="'password'"></app-text-input>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <strong>Rol: </strong>
+                <select class="ms-2 form-select" style="width: min-content;" id="Role"
+                [(ngModel)]="addingRole" name="addingRole" [ngModelOptions]="{standalone: true}"
+                >   
+                <option *ngFor="let role of availableRoles" value="{{role}}">{{role}}</option>
+                </select>      
+            </div>
+            <!-- <div class="d-flex justify-content-center">
+                <div class="mx-2">
+                    <button
+                        class="btn btn-outline-primary"
+                        type="button"
+                        [ngClass]="{'active': addingRole === 'Member'}"
+                        (click)="addingRole = 'Member'"
+                    >
+                        Member
+                    </button>
+                </div>
+                <div class="mx-2">
+                    <button
+                        class="btn btn-outline-primary"
+                        type="button"
+                        [ngClass]="{'active': addingRole === 'Moderator'}"
+                        (click)="addingRole = 'Moderator'"
+                    >
+                        Moderator
+                    </button>
+                </div>
+                <div class="mx-2">
+                    <button
+                        class="btn btn-outline-primary"
+                        type="button"
+                        [ngClass]="{'active': addingRole === 'Admin'}"
+                        (click)="addingRole = 'Admin'"
+                    >
+                        Admin
+                    </button>
+                </div>
+            </div> -->
+    
+            <div class="row" *ngIf="validationErrors">
+                <ul class="text-danger">
+                    <li *ngFor="let error of validationErrors">{{error}}</li>
+                </ul>
+            </div>
+        
+            <div class="text-center mt-2">
+                <button [disabled]="!registerForm.valid" class="btn btn-success me-2" type="submit">Kaydet</button>
+                <button class="btn btn-warning" type="button" (click)="clear()">Temizle</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" bsModal #nameModal="bs-modal" [config]="{backdrop: 'static'}"
+     tabindex="-1" role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">İsmi Değiştir: {{changeS}}</h4>
+        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="nameModal.hide(); changeS='';">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="nameForm" (ngSubmit)="nameForm.valid && changeName()" autocomplete="off">
+            <div class="d-flex justify-content-center">
+                <div class="mx-2">
+                    <label>Kullanıcı Adı</label>
+                    <app-text-input [formControl]="$any(nameForm.controls['userName'])" [label]="'Kullanıcı ismi'"></app-text-input>
+                </div>
+            </div>
+            <div class="row" *ngIf="nameValidationErrors">
+                <ul class="text-danger">
+                    <li *ngFor="let error of nameValidationErrors">{{error}}</li>
+                </ul>
+            </div>
+        
+            <div class="text-center mt-2">
+                <button (click)="nameModal.hide()" [disabled]="!nameForm.valid" class="btn btn-success me-2" type="submit">Kaydet</button>
+                <button class="btn btn-warning" type="button" (click)="resetNameForm()">Temizle</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" bsModal #pModal="bs-modal" [config]="{backdrop: 'static'}"
+     tabindex="-1" role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">Şifre Değiştir: {{changeS}}</h4>
+        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="pModal.hide(); changeS='';">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="passwordForm" (ngSubmit)="passwordForm.valid && changePassword()" autocomplete="off">
+            <div class="d-flex">
+                <div class="mx-2">
+                    <label>Şifre</label>
+                    <app-text-input class="mx-4" [formControl]="$any(passwordForm.controls['PnewPassword'])" [label]="'Şifre'" [type]="'password'"></app-text-input>
+                </div>
+                <div class="mx-2">
+                    <label>Şifre Doğrula</label>
+                    <app-text-input [formControl]="$any(passwordForm.controls['PconfirmPassword'])" [label]="'Şifre Doğrula'" [type]="'password'"></app-text-input>
+                </div>
+            </div>
+            <div class="row" *ngIf="passwordValidationErrors">
+                <ul class="text-danger">
+                    <li *ngFor="let error of passwordValidationErrors">{{error}}</li>
+                </ul>
+            </div>
+        
+            <div class="text-center mt-2">
+                <button (click)="pModal.hide()" [disabled]="!passwordForm.valid" class="btn btn-success me-2" type="submit">Kaydet</button>
+                <button class="btn btn-warning" type="button" (click)="resetPasswordForm()">Temizle</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
