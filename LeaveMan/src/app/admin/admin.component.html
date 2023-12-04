@@ -36,10 +36,11 @@
             <thead>
                 <tr>
                     <th>Kullanıcı Adı</th>
-                    <th *ngFor="let role of availableRoles">{{role}}</th>
+                    <!-- <th *ngFor="let role of availableRoles">{{role}}</th> -->
+                    <th> Çalışan</th>
+                    <th> Yönetici</th>
                     <th style="width: 10%;">Kullanıcı Sil</th>
                     <th style="width: 10%;">İsmi Değiştir</th>
-                    <th style="width: 10%;">Eklenen Alımlar</th>
                     <th *ngIf="sessionUserName == 'admin'" style="width: 10%;">Şifre değiştir</th>
                 </tr>
             </thead>
@@ -69,13 +70,8 @@
                         </button>
                     </td>
                     <td style="width: 10%;">
-                        <button class="btn btn-secondary" (click)="nameModal.show(); changeS=user.userName" [disabled]="user.userName === 'admin'">
+                        <button class="btn btn-info" (click)="nameModal.show(); changeS=user.userName" [disabled]="user.userName === 'admin'">
                             <i class="fa fa-gear"></i>
-                        </button>
-                    </td>
-                    <td style="width: 10%;">
-                        <button routerLink="/transactions" [queryParams]="{userName: user.userName, userId: user.id}" class="btn btn-info">
-                            <i class="fa fa-arrow-right"></i>
                         </button>
                     </td>
                     <td style="width: 10%;">

@@ -1,14 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import { Member } from '../_models/member';
 import { User } from '../_models/user';
+import { config } from 'rxjs';
+import { apiUrl } from '../app.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MemberService {
-  baseUrl = environment.apiUrl;
+  baseUrl = apiUrl;
 
   constructor(private http: HttpClient) { }
 

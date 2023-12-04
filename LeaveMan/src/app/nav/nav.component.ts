@@ -113,7 +113,6 @@ export class NavComponent implements OnInit {
 
 
   Login() {
-    console.log("login: ", this.login);
     this.accountService.login(this.login).subscribe({
       next: () => {
         this.toastr.success(this.login.userName + ' olarak giriş yapıldı.');

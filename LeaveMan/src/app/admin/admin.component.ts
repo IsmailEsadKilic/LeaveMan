@@ -4,6 +4,8 @@ import { take } from 'rxjs';
 import { User } from '../_models/user';
 import { ToastrService } from 'ngx-toastr';
 import { AccountService } from '../_services/account.service';
+import { MemberService } from '../_services/member.service';
+import { AdminService } from '../_services/admin.service';
 
 @Component({
   selector: 'app-admin',
@@ -12,7 +14,7 @@ import { AccountService } from '../_services/account.service';
 })
 export class AdminComponent implements OnInit {
   usersWithRoles: User[] = [];
-  availableRoles = ['Member', 'Moderator', 'Admin'];
+  availableRoles = ['Employee', 'Admin'];
 
   registerForm: FormGroup = new FormGroup({});
   validationErrors: string[] | undefined;
@@ -121,7 +123,7 @@ export class AdminComponent implements OnInit {
   
   clear() {
     this.registerForm.reset();
-    this.addingRole = "Member";
+    this.addingRole = "Employee";
   }
 
   InitializeForm() {
@@ -177,9 +179,9 @@ export class AdminComponent implements OnInit {
         }
         console.log("result: ", result);
         console.log("addingRole: ", this.addingRole);
-        if (this.addingRole === "Moderator") {
-          console.log("Moderator");
-          this.adminService.updateUserRoles(values.userName, "Moderator,Member").subscribe({
+        if (this.addingRole === "Employee") {
+          console.log("Employee");
+          this.adminService.updateUserRoles(values.userName, "Employee").subscribe({
             next: () => {
               console.log("updated moderator");
               this.getUsersWithRoles();
@@ -188,7 +190,7 @@ export class AdminComponent implements OnInit {
           })
         } else if (this.addingRole === "Admin") {
           console.log("admin")
-          this.adminService.updateUserRoles(values.userName, "Admin,Moderator,Member").subscribe({
+          this.adminService.updateUserRoles(values.userName, "Admin,Employee").subscribe({
             next: () => {
               console.log("updated admin");
               this.getUsersWithRoles();
@@ -196,7 +198,7 @@ export class AdminComponent implements OnInit {
             }
           })
         } else {
-          console.log("member")
+          console.log("Employee")
           this.getUsersWithRoles();
           this.clear();
         }

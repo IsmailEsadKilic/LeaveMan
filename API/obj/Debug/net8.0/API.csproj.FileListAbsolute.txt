@@ -139,3 +139,4 @@ C:\projects\LeaveMan\API\obj\Debug\net8.0\API.pdb
 C:\projects\LeaveMan\API\obj\Debug\net8.0\API.genruntimeconfig.cache
 C:\projects\LeaveMan\API\obj\Debug\net8.0\ref\API.dll
 C:\projects\LeaveMan\API\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\projects\LeaveMan\API\obj\Debug\net8.0\API.sourcelink.json

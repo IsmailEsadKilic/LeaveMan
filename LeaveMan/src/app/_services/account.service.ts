@@ -35,7 +35,6 @@ export class AccountService {
   }
 
   changePassword(cd : changeDto) {
-    console.log("cd: ", cd);
     return this.http.post<any>(this.baseUrl + 'account/change-password', cd)
   }
 
@@ -44,14 +43,12 @@ export class AccountService {
       map(user => {
         if(user) {
           this.toastr.success(`${user.userName} kaydedildi.`);
-          console.log("register: ", user);
           return true;
         }
         return false;
       })
     )
   }
-
 
   setCurrentUser(user: User) {
     user.roles = [];
